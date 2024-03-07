@@ -35,20 +35,15 @@ fn update(app: &mut App, state: &mut State) {
 fn draw(gfx: &mut Graphics, state: &mut State) {
     let mut draw: Draw = gfx.create_draw();
     draw.clear(Color::BLACK);
-    let mut score: usize = 0;
 
-    spawn_platforms(&mut state.platform_list, score);
+    spawn_platforms(&mut state.platform_list, state.score as usize);
 
-    score = score + 1;
-
-    // draw.rect((0.0, 0.0), (100.0, 10.0));
-    let mut counter: i16 = 0;
+    state.score += 1;
 
     for platform in state.platform_list.iter() {
         match platform {
             PlatformResult::BasicPlatform(platform) => {
                 draw.rect(platform.position(), (PLATFORM_WIDTH, PLATFORM_HEIGHT));
-                counter += 1;
             }
             PlatformResult::Blank => {}
         }
@@ -62,6 +57,7 @@ fn draw(gfx: &mut Graphics, state: &mut State) {
 #[derive(AppState)]
 struct State {
     platform_list: Vec<PlatformResult>,
+    score: i32,
 }
 
 impl State {
@@ -188,7 +184,8 @@ impl State {
                 PlatformResult::Blank,
                 PlatformResult::Blank,
                 PlatformResult::Blank,
-            ]
+            ],
+            score: 0,
         }
     }
 }
@@ -226,7 +223,7 @@ fn spawn_platforms(platforms: &mut Vec<PlatformResult>, score: usize) {
     if score == 0 as usize {
         for i in 0..6 {
             for t in 0..20 {
-                bit = rng.gen_range(0..=1);
+                bit = rng.gen_range(0..=4);
                 if bit == 1 {
                     platforms[(i*20)+t] = PlatformResult::BasicPlatform(BasicPlatform::new(i as f32 * 100.0, t as f32 * 30.0));
                 } else {
